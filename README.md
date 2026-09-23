@@ -1,48 +1,133 @@
-# Azure Landing Zones Accelerator Starter Module for Terraform - Azure Verified Modules Complete Multi-Region
 
-This module is part of the Azure Landing Zones Accelerator solution. It is a complete multi-region implementation of the Azure Landing Zones Platform Landing Zone for Terraform.
+# Azure Landing Zone Platform Lab
 
-It deploys a hub and spoke virtual network or Virtual WAN architecture across multiple regions.
+## Overview
 
-The module deploys the following resources:
+This project implements a Microsoft-aligned Azure Landing Zone platform using the Azure Landing Zones IaC Accelerator, Terraform, Azure Verified Modules, Azure DevOps, and workload identity federation.
 
-- Management group hierarchy
-- Azure Policy definitions and assignments
-- Role definitions
-- Management resources, including Log Analytics workspace and Automation account
-- Hub and spoke virtual network or Virtual WAN architecture across multiple regions
-- DDOS protection plan
-- Private DNS zones
+The objective was to build and operate the platform layer of an enterprise-style Azure environment, including management groups, dedicated platform subscriptions, governance, centralized management services, hub networking, infrastructure as code, and controlled CI/CD deployment.
 
-## Usage
+The project is separated into two phases:
 
-The module is intended to be used with the [Azure Landing Zones Accelerator](https://aka.ms/alz/acc). Head over there to get started.
+- **Phase 1 - Platform Landing Zone**: governance, platform subscriptions, shared management services, connectivity foundation, Terraform state, and Azure DevOps delivery controls.
+- **Phase 2 - Application Landing Zone**: workload subscriptions, spoke networking, AKS, ACR, Key Vault, workload identity, observability, and application delivery pipelines.
 
->NOTE: The module can be used independently if needed. Example `tfvars` files can be found in the `examples` directory for that use case.
+This repository documents **Phase 1 - Platform Landing Zone**.
 
-### Running Directly
+> This is a non-production engineering lab designed to demonstrate enterprise Azure platform patterns and operational practices.
 
-#### Run the local examples
+## Architecture
 
-Create a `terraform.tfvars` file in the root of the module directory with the following content, replacing the placeholders with the actual values:
+![Azure Landing Zone Platform Architecture](docs/screenshots/alz-platform-architecture.png)
 
-```hcl
-starter_locations            = ["uksouth", "ukwest"]
-subscription_id_connectivity = "00000000-0000-0000-0000-000000000000"
-subscription_id_identity     = "00000000-0000-0000-0000-000000000000"
-subscription_id_management   = "00000000-0000-0000-0000-000000000000"
+The platform uses the Azure Landing Zone management-group hierarchy with dedicated subscriptions for Management, Connectivity, Identity, and Security.
+
+Detailed architecture, management-group hierarchy, subscription responsibilities, connectivity design, and platform/application separation are documented in [Architecture](docs/architecture.md).
+
+## What Was Implemented
+
+- Azure Landing Zone management-group hierarchy
+- Dedicated Management, Connectivity, Identity, and Security subscriptions
+- Azure Policy and RBAC inheritance
+- Centralized Log Analytics and management resources
+- Data Collection Rules
+- Terraform plan and apply managed identities
+- Remote Terraform state storage
+- Hub virtual network in Australia East
+- Azure DevOps CI and CD pipelines
+- Pull request validation and protected branch workflow
+- Terraform plan, manual approval, and apply process
+- Workload identity federation / OIDC
+- Cost-optimized parked state
+- Final Terraform reconciliation with no remaining drift
+
+## Technology Stack
+
+- **Cloud Platform:** Microsoft Azure
+- **Landing Zone Framework:** Azure Landing Zones IaC Accelerator
+- **Infrastructure as Code:** Terraform
+- **Module Framework:** Azure Verified Modules
+- **Source Control:** Azure Repos
+- **CI/CD:** Azure DevOps Pipelines
+- **Authentication:** Workload Identity Federation / OIDC
+- **Governance:** Azure Policy, Azure RBAC, Management Groups
+- **Monitoring:** Azure Monitor, Log Analytics, Data Collection Rules
+- **Networking:** Hub-and-Spoke Virtual Network
+- **State Management:** Azure Storage remote Terraform state
+- **Region:** Australia East
+
+## Platform Design
+
+The platform separates shared governance and operational services from future application workloads.
+
+Dedicated Management, Connectivity, Identity, and Security subscriptions provide clear platform boundaries, while future Application Landing Zones can consume the shared platform foundation without recreating it.
+
+See [Architecture](docs/architecture.md).
+
+## CI/CD and Change Control
+
+Azure DevOps manages infrastructure changes through feature branches, pull requests, Terraform validation, merge controls, Terraform plan, manual approval, and Terraform apply.
+
+Pipeline authentication uses workload identity federation / OIDC rather than long-lived deployment secrets.
+
+See [CI/CD and Change Control](docs/cicd.md).
+
+## Governance and Security
+
+Governance is applied through the Azure Landing Zone management-group hierarchy using Azure Policy and Azure RBAC.
+
+Separate deployment identities, pull request validation, protected branches, and manual approval provide additional infrastructure change controls.
+
+See [Governance and Security](docs/governance.md).
+
+## Monitoring and Management
+
+The Management subscription provides shared operational services including Log Analytics, Data Collection Rules, deployment identities, Terraform state, and Service Health alerting resources.
+
+## FinOps
+
+Higher-cost connectivity services were deployed and validated during the project, then removed or disabled to create a manageable parked lab state while retaining the core platform foundation.
+
+See [FinOps and Cost Optimisation](docs/finops.md).
+
+
+## Validation
+
+The final platform state was reconciled through Azure DevOps and Terraform.
+
+Final Terraform plan:
+
+```text
+No changes. Your infrastructure matches the configuration.
 ```
 
-##### Hub and Spoke Virtual Networks Multi Region
+Final Terraform apply:
 
-```powershell
-terraform init
-terraform apply -var-file ./examples/full-multi-region/hub-and-spoke-vnet.tfvars
+```text
+Apply complete! Resources: 0 added, 0 changed, 0 destroyed.
 ```
 
-##### Virtual WAN Multi Region
+Detailed validation evidence is available in [Platform Verification](docs/verification.md).
 
-```powershell
-terraform init
-terraform apply -var-file ./examples/full-multi-region/virtual-wan.tfvars
+## Documentation
+
+- [Architecture](docs/architecture.md)
+- [CI/CD and Change Control](docs/cicd.md)
+- [Governance and Security](docs/governance.md)
+- [FinOps and Cost Optimisation](docs/finops.md)
+- [Platform Verification](docs/verification.md)
+- [Troubleshooting and Engineering Lessons](docs/learning/troubleshooting-and-lessons.md)
+
+## Project Status
+
+**Phase 1 - Platform Landing Zone: Complete**
+
+The platform has been deployed, validated, cost-optimised for lab use, and reconciled to a clean Terraform state.
+
+Release milestone:
+
+```text
+v1.0-alz-platform-lab
 ```
+
+The next phase will build an Application Landing Zone using this platform foundation.
