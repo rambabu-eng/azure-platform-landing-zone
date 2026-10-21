@@ -239,7 +239,25 @@ management_group_settings = {
         }
       }
     }
+
+    landingzones = {
+      policy_assignments = {
+        Deny-Priv-Esc-AKS = {
+          parameters = {
+            excludedNamespaces = [
+              "kube-system",
+              "gatekeeper-system",
+              "azure-arc",
+              "azure-extensions-usage-system",
+              "aks-command"
+            ]
+          }
+        }
+      }
+    }
   }
+
+
   /*
   # Example of how to add management group role assignments
   management_group_role_assignments = {
